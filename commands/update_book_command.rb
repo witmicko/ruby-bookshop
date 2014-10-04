@@ -13,8 +13,8 @@ class UpdateBookCommand < UserCommand
 
   def input
    	 puts 'Update Book.'
-	   print "ISBN? "   
-	   @isbn = STDIN.gets.chomp  
+	   print 'ISBN? '
+     @isbn = STDIN.gets.chomp
   end
 
   def execute

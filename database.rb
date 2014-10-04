@@ -29,6 +29,10 @@ require_relative 'book_in_stock'
       object_relational_mapper dataset
   end
 
+  def addBook book
+
+  end
+
   def updateBook book
      books = @DB_ref[:books].where(:isbn => book.isbn)
      books.update(:author => book.author, 

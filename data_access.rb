@@ -29,4 +29,8 @@ require 'dalli'
        @database.updateBook book
     end
 
+    def addBook book
+
+    end
+
 end 
