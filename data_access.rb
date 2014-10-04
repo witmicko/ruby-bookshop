@@ -30,7 +30,7 @@ require 'dalli'
     end
 
     def addBook book
-
+      @database.addBook book
     end
 
 end 

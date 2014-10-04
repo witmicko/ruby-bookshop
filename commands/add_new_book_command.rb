@@ -31,8 +31,8 @@ class AddNewBookCommand < UserCommand
 
 
   def execute
-    b = BookInStock.new(@isbn, @title, @author, $GENRE[@genre], @price, @quantity)
-
+    book = BookInStock.new(@isbn, @title, @author, $GENRE[@genre], @price, @quantity)
+    @data_source.addBook book
   end
 
   def getGenre

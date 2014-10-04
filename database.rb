@@ -30,7 +30,13 @@ require_relative 'book_in_stock'
   end
 
   def addBook book
-
+    books = @DB_ref[:books]
+    books.insert(:isbn   => book.isbn,
+                 :author => book.author,
+                 :genre  => book.genre,
+                 :title  => book.title,
+                 :price  => book.price,
+                 :quantity => book.quantity)
   end
 
   def updateBook book
