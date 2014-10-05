@@ -1,5 +1,6 @@
 require_relative 'data_access'
 require_relative 'commands/author_search_command'
+require_relative 'commands/genre_search_command'
 require_relative 'commands/number_of_copies_command'
 require_relative 'commands/update_book_command'
 require_relative 'commands/add_new_book_command'
@@ -10,6 +11,7 @@ data_source.start
 
 commands = [
     AuthorSearchCommand.new(data_source),
+    GenreSearchCommand.new(data_source),
     NumberOfCopiesCommand.new(data_source),
     UpdateBookCommand.new(data_source),
     AddNewBookCommand.new(data_source),

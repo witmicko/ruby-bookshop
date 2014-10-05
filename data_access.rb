@@ -33,4 +33,8 @@ require 'dalli'
       @database.addBook book
     end
 
+    def genreSearch genre
+      @database.genreSearch genre
+    end
+
 end 
