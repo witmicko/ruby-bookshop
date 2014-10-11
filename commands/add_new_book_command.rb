@@ -26,7 +26,7 @@ class AddNewBookCommand < UserCommand
     print 'Author: '
     @author = STDIN.gets.chomp
     @genre = getGenre
-
+    @quantity = getQuantity
   end
 
 
