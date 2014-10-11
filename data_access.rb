@@ -29,6 +29,10 @@ require 'dalli'
        @database.updateBook book
     end
 
+    def deleteBook isbn
+      @database.deleteBook isbn
+    end
+
     def addBook book
       @database.addBook book
     end

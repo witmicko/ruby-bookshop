@@ -12,7 +12,7 @@ require_relative 'book_in_stock'
   
   def start 
   	 @DB_ref = Sequel.sqlite(@db_path ) 
-     @DB_ref.loggers << Logger.new($stdout)
+     #@DB_ref.loggers << Logger.new($stdout)
   end
 
   def stop
@@ -46,6 +46,10 @@ require_relative 'book_in_stock'
                  :title => book.title, 
                  :price => book.price, 
                  :quantity => book.quantity )
+  end
+
+  def deleteBook isbn
+    @DB_ref[:books].where(:isbn => isbn).delete
   end
 
   def genreSearch(genre)

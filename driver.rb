@@ -4,6 +4,7 @@ require_relative 'commands/genre_search_command'
 require_relative 'commands/number_of_copies_command'
 require_relative 'commands/update_book_command'
 require_relative 'commands/add_new_book_command'
+require_relative 'commands/delete_book_command'
 require_relative 'commands/quit_command'
 
 data_source = DataAccess.new (ARGV[0])
@@ -15,6 +16,7 @@ commands = [
     NumberOfCopiesCommand.new(data_source),
     UpdateBookCommand.new(data_source),
     AddNewBookCommand.new(data_source),
+    DeleteBookCommand.new(data_source),
     QuitCommand.new(data_source)
 ]
 last_command = commands.size() -1
