@@ -1,5 +1,6 @@
 require_relative 'book_in_stock'
 require_relative 'database'
+require_relative 'local_cache'
 require 'dalli'
 
   class DataAccess 
@@ -8,6 +9,7 @@ require 'dalli'
        @database = DataBase.new db_path
        @Remote_cache = Dalli::Client.new('localhost:11211')
        # Relevant data structure(s) for local cache
+       @local_cache = LocalCache.new
     end
     
     def start 
@@ -34,11 +36,14 @@ require 'dalli'
     end
 
     def addBook book
+      @local_cache.set book
       @database.addBook book
     end
 
     def genreSearch genre
       @database.genreSearch genre
     end
+
+
 
 end 

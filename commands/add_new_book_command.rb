@@ -31,8 +31,17 @@ class AddNewBookCommand < UserCommand
 
 
   def execute
-    book = BookInStock.new(@isbn, @title, @author, $GENRE[@genre], @price, @quantity)
-    @data_source.addBook book
+    if @data_source.findISBN(@isbn).nil?
+      book = BookInStock.new(isbn: @isbn,
+                             title: @title,
+                             author: @author,
+                             genre: $GENRE[@genre],
+                             price: @price,
+                             quantity: @quantity)
+      @data_source.addBook book
+    else
+      puts 'isbn already used'
+    end
   end
 
   def getGenre

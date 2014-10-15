@@ -61,9 +61,12 @@ private
   def object_relational_mapper dataset
     books = []
     dataset.each do |d|
-      books << BookInStock.new(d[:isbn], d[:title],
-                               d[:author],d[:genre],
-                               d[:price], d[:quantity])
+      books << BookInStock.new(isbn: d[:isbn],
+                               title: d[:title],
+                               author: d[:author],
+                               genre: d[:genre],
+                               price: d[:price],
+                               quantity: d[:quantity])
     end
     books
   end
