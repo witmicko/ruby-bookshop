@@ -3,49 +3,49 @@ require 'sqlite3'
 require 'logger'
 require_relative 'book_in_stock'
 
-  class DataBase 
-  
+class DataBase
+
   def initialize (db_path)
-      @db_path = db_path
-      @DB_ref = nil
-   end
-  
-  def start 
-  	 @DB_ref = Sequel.sqlite(@db_path ) 
-     #@DB_ref.loggers << Logger.new($stdout)
+    @db_path = db_path
+    @DB_ref = nil
+  end
+
+  def start
+    @DB_ref = Sequel.sqlite(@db_path)
+    #@DB_ref.loggers << Logger.new($stdout)
   end
 
   def stop
   end
 
   def findISBN isbn
-     dataset = @DB_ref[:books].where(:isbn => isbn)
-     objects = object_relational_mapper dataset
-     objects[0]
+    dataset = @DB_ref[:books].where(:isbn => isbn)
+    objects = object_relational_mapper dataset
+    objects[0]
   end
 
   def authorSearch(author)
-  	  dataset = @DB_ref[:books].where(:author => author)
-      object_relational_mapper dataset
+    dataset = @DB_ref[:books].where(:author => author)
+    object_relational_mapper dataset
   end
 
   def addBook book
     books = @DB_ref[:books]
-    books.insert(:isbn   => book.isbn,
+    books.insert(:isbn => book.isbn,
                  :author => book.author,
-                 :genre  => book.genre,
-                 :title  => book.title,
-                 :price  => book.price,
+                 :genre => book.genre,
+                 :title => book.title,
+                 :price => book.price,
                  :quantity => book.quantity)
   end
 
   def updateBook book
-     books = @DB_ref[:books].where(:isbn => book.isbn)
-     books.update(:author => book.author, 
+    books = @DB_ref[:books].where(:isbn => book.isbn)
+    books.update(:author => book.author,
                  :genre => book.genre,
-                 :title => book.title, 
-                 :price => book.price, 
-                 :quantity => book.quantity )
+                 :title => book.title,
+                 :price => book.price,
+                 :quantity => book.quantity)
   end
 
   def deleteBook isbn
@@ -53,11 +53,11 @@ require_relative 'book_in_stock'
   end
 
   def genreSearch(genre)
-      dataset = @DB_ref[:books].where(:genre => genre)
-      object_relational_mapper dataset
+    dataset = @DB_ref[:books].where(:genre => genre)
+    object_relational_mapper dataset
   end
 
-private
+  private
   def object_relational_mapper dataset
     books = []
     dataset.each do |d|

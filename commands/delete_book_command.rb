@@ -12,7 +12,7 @@ class DeleteBookCommand < UserCommand
   end
 
   def input
-    puts 'Adding new book:'
+    puts 'Deleting new book:'
     print 'ISBN: '
     @isbn = STDIN.gets.chomp
   end
@@ -29,7 +29,7 @@ class DeleteBookCommand < UserCommand
         @data_source.deleteBook @isbn
       end
     else
-      puts "Invalid ISBN"
+      puts 'Invalid ISBN'
     end
   end
 

@@ -1,4 +1,5 @@
 require_relative 'book_in_stock'
+require_relative 'utils/isbn_util'
 
 class LocalCache
   attr_accessor :locCache
@@ -17,11 +18,15 @@ class LocalCache
   end
 
   def set(book)
-    isbn =Integer(book.isbn.tr('-', ''))
+    isbn = ISBN_util.to_i(book.isbn)
     value = [@data[isbn][0]+1, book]
 
     @data.store(isbn, value)
-    puts @data[key]
+    puts @data[isbn]
+    puts '==================='
+    puts @data[isbn][0]
+    puts @data[isbn][1]
+
   end
 
 end
