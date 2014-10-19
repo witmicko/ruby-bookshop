@@ -25,7 +25,8 @@ class DataBase
   end
 
   def authorSearch(author)
-    dataset = @DB_ref[:books].where(:author => author)
+    # dataset = @DB_ref[:books].where(:author => author)
+    dataset = @DB_ref[:books].where(Sequel.ilike(:author, author.downcase))
     object_relational_mapper dataset
   end
 

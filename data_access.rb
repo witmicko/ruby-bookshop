@@ -22,30 +22,43 @@ class DataAccess
 
   def findISBN(isbn)
     isbn = ISBN_util.to_i(isbn)
+    updateCaches(isbn)[:book]
+  end
 
+  def updateCaches(isbn)
     inLocal = @local_cache.get(isbn)
     inShared = @Remote_cache.get(isbn)
 
     if inShared
       if inLocal && inShared[:version]==inLocal[:version]
-        book = inLocal[:book]
+        inLocal
       else
         book = inShared[:book]
         @local_cache.set(isbn, inShared[:version], book)
       end
     else
-      book = @database.findISBN(isbn)
+      book = @database.findISBN(ISBN_util.to_s(isbn))
       if book
         @Remote_cache.set(isbn, {version: 1, book: book})
+        puts @Remote_cache.get(isbn)
         @local_cache.set(isbn, 1, book)
       end
     end
-    book
+
   end
 
-
   def authorSearch(author)
-    @database.authorSearch author
+    books = @database.authorSearch author
+    key = author
+    books.sort!{|a,b| a.isbn <=>b.isbn}
+    books.each do |b|
+      isbn = ISBN_util.to_i(b.isbn)
+      cacheEntry = updateCaches(isbn)
+      key << "_#{isbn}_v#{cacheEntry[:version]}"
+
+      end
+    puts
+    books
   end
 
   def updateBook(book)
@@ -64,7 +77,7 @@ class DataAccess
   end
 
   def deleteBook(isbn)
-    @database.deleteBook isbn
+    @database.deleteBook ISBN_util.to_s(isbn)
     isbn = ISBN_util.to_i(isbn)
     @local_cache.deleteEntry(isbn)
     @Remote_cache.delete(isbn)
