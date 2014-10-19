@@ -13,8 +13,8 @@ class NumberOfCopiesCommand < UserCommand
 
    def input
 		puts 'No. of copies.'
-		print "ISBN? "   
-		@isbn = STDIN.gets.chomp  
+		print 'ISBN? '
+    @isbn = STDIN.gets.chomp
    end
 
     def execute
