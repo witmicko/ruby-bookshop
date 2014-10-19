@@ -25,6 +25,7 @@ commands = [
   quit = false
   puts
   while !quit
+
     commands.each_index do |index|
       puts " #{index+1} #{commands[index].title}"
     end

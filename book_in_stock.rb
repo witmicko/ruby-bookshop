@@ -22,8 +22,13 @@ class BookInStock
 
   def self.from_cache(serialized)
     fields = serialized.split(',')
-    BookInStock.new fields[0], fields[1], fields[2],
-                    fields[3], fields[4], fields[5]
+
+    BookInStock.new ({isbn:     fields[0],
+                      title:    fields[1],
+                      author:    fields[2],
+                      genre:   fields[3],
+                      price:    fields[4],
+                      quantity: fields[5]})
   end
 
 end

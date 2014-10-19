@@ -10,7 +10,7 @@ class DataAccess
     @Remote_cache = Dalli::Client.new('localhost:11211')
     @Remote_cache.flush_all
     # Relevant data structure(s) for local cache
-    @local_cache = LocalCache.new
+    @local_cache = LocalCache.new({ttl: 3600})
   end
 
   def start
@@ -22,7 +22,9 @@ class DataAccess
 
   def findISBN(isbn)
     isbn = ISBN_util.to_i(isbn)
-    updateCaches(isbn)[:book]
+    serialized = updateCaches(isbn)[:book]
+
+    BookInStock.from_cache(serialized)
   end
 
   def updateCaches(isbn)
@@ -31,17 +33,17 @@ class DataAccess
 
     if inShared
       if inLocal && inShared[:version]==inLocal[:version]
+        @local_cache.cleanExpired
         inLocal
       else
         book = inShared[:book]
-        @local_cache.set(isbn, inShared[:version], book)
+        @local_cache.set(isbn, inShared[:version], book.to_cache)
       end
     else
       book = @database.findISBN(ISBN_util.to_s(isbn))
       if book
-        @Remote_cache.set(isbn, {version: 1, book: book})
-        puts @Remote_cache.get(isbn)
-        @local_cache.set(isbn, 1, book)
+        @Remote_cache.set(isbn, {version: 1, book: book.to_cache})
+        @local_cache.set(isbn, 1, book.to_cache)
       end
     end
 
