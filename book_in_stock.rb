@@ -22,7 +22,6 @@ class BookInStock
 
   def self.from_cache(serialized)
     fields = serialized.split(',')
-
     BookInStock.new ({isbn:     fields[0],
                       title:    fields[1],
                       author:    fields[2],

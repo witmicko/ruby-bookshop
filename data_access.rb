@@ -22,43 +22,39 @@ class DataAccess
 
   def findISBN(isbn)
     isbn = ISBN_util.to_i(isbn)
-    serialized = updateCaches(isbn)[:book]
-
-    BookInStock.from_cache(serialized)
+    updateCaches(isbn)[:book] if updateCaches(isbn)
   end
 
   def updateCaches(isbn)
     inLocal = @local_cache.get(isbn)
     inShared = @Remote_cache.get(isbn)
 
-    if inShared
-      if inLocal && inShared[:version]==inLocal[:version]
-        @local_cache.cleanExpired
-        inLocal
-      else
-        book = inShared[:book]
-        @local_cache.set(isbn, inShared[:version], book.to_cache)
-      end
+    if inLocal and inShared[:version]==inLocal[:version]
+      inLocal
     else
-      book = @database.findISBN(ISBN_util.to_s(isbn))
-      if book
-        @Remote_cache.set(isbn, {version: 1, book: book.to_cache})
-        @local_cache.set(isbn, 1, book.to_cache)
+      if inShared
+        book = inShared[:book]
+        @local_cache.set(isbn, inShared[:version], book)
+      else
+        book = @database.findISBN(ISBN_util.to_s(isbn))
+        if book
+          @Remote_cache.set(isbn, {version: 1, book: book.to_cache})
+          @local_cache.set(isbn, 1, book)
+        end
       end
     end
-
   end
 
   def authorSearch(author)
     books = @database.authorSearch author
     key = author
-    books.sort!{|a,b| a.isbn <=>b.isbn}
+    books.sort! { |a, b| a.isbn <=>b.isbn }
     books.each do |b|
       isbn = ISBN_util.to_i(b.isbn)
       cacheEntry = updateCaches(isbn)
       key << "_#{isbn}_v#{cacheEntry[:version]}"
 
-      end
+    end
     puts
     books
   end
@@ -69,7 +65,7 @@ class DataAccess
     inShared = @Remote_cache.get(isbn)
     if inShared
       ver = inShared[:version]+1
-      @Remote_cache.set(isbn, {version: ver, book: book})
+      @Remote_cache.set(isbn, {version: ver, book: book.to_cache})
     end
     inLoc = @local_cache.get(isbn)
     if inLoc

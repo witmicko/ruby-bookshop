@@ -22,7 +22,7 @@ class NumberOfCopiesCommand < UserCommand
     	if result
     	   puts "No. of copies = #{result.quantity}"
     	else
-    		puts "Invalid ISBN"
+    		puts 'Invalid ISBN'
     	end
 	end
 
