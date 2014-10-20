@@ -10,7 +10,7 @@ class DataAccess
     @Remote_cache = Dalli::Client.new('localhost:11211')
     @Remote_cache.flush_all
     # Relevant data structure(s) for local cache
-    @local_cache = LocalCache.new({ttl: 3600})
+    @local_cache = LocalCache.new({ttl: 2})
   end
 
   def start
@@ -22,7 +22,9 @@ class DataAccess
 
   def findISBN(isbn)
     isbn = ISBN_util.to_i(isbn)
-    updateCaches(isbn)[:book] if updateCaches(isbn)
+    if (data = updateCaches(isbn))
+      data[:book]
+    end
   end
 
   def updateCaches(isbn)

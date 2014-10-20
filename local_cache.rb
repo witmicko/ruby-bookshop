@@ -11,34 +11,22 @@ class LocalCache
   end
 
   def get(isbn)
-    @data[isbn]
+    if (entry = @data[isbn])
+      entry[:ttl]+=1
+      @data.delete[isbn] if entry[:ttl] >= @ttl
+    end
+    entry
   end
 
-  def set(isbn, version, serializedBook)
-    @data.store(isbn, {version: version,
-                       book: serializedBook,
-                       spawned: timestampSec})
 
+  def set(isbn, version, book)
+    @data.store(isbn, {version: version,
+                       book: book,
+                       ttl: 1})
   end
 
   def deleteEntry(isbn)
     @data.delete(isbn)
   end
-
-  def cleanExpired
-    @data.each do |k,v|
-      timeAlive = timestampSec - v[:spawned]
-      if(@ttl < timeAlive)
-        @data.delete(k)
-      end
-    end
-
-
-  end
-
-  def timestampSec
-    Time.now.getutc.strftime('%s').to_i
-  end
-
 
 end
