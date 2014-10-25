@@ -18,7 +18,8 @@ class AuthorSearchCommand < UserCommand
   end
 
   def execute
-    @data_source.author_search(@author).each { |b| puts b }
+    books = @data_source.author_search(@author)
+    books.each { |b| puts b } unless books.nil?
   end
 
 end

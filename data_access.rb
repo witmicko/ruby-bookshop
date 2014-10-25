@@ -53,7 +53,7 @@ class DataAccess
     books = nil
     # if author already stored in
     if @remote_cache.get(author)
-
+      puts 'lololololololol'
       # if not, build a complex entity
     else
       books = @database.author_search author
