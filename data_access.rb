@@ -10,7 +10,7 @@ class DataAccess
     @Remote_cache = Dalli::Client.new('localhost:11211')
     @Remote_cache.flush_all
     # Relevant data structure(s) for local cache
-    @local_cache = LocalCache.new({ttl: 2})
+    @local_cache = LocalCache.new({ttl: 5})
   end
 
   def start
@@ -30,8 +30,8 @@ class DataAccess
   def updateCaches(isbn)
     inLocal = @local_cache.get(isbn)
     inShared = @Remote_cache.get(isbn)
-
-    if inLocal and inShared[:version]==inLocal[:version]
+    if inLocal and inShared and inShared[:version]==inLocal[:version]
+      display_cache
       inLocal
     else
       if inShared
@@ -48,6 +48,7 @@ class DataAccess
   end
 
   def authorSearch(author)
+
     books = @database.authorSearch author
     key = author
     books.sort! { |a, b| a.isbn <=>b.isbn }
@@ -90,6 +91,11 @@ class DataAccess
 
   def genreSearch(genre)
     @database.genreSearch genre
+  end
+
+  def display_cache
+    puts 'Local cache:'
+    @local_cache.display_cache
   end
 
 

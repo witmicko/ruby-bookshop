@@ -12,8 +12,8 @@ class LocalCache
 
   def get(isbn)
     if (entry = @data[isbn])
-      entry[:ttl]+=1
-      @data.delete[isbn] if entry[:ttl] >= @ttl
+      entry[:ttl]-=1
+      @data.delete(isbn) if entry[:ttl] == 0
     end
     entry
   end
@@ -22,11 +22,16 @@ class LocalCache
   def set(isbn, version, book)
     @data.store(isbn, {version: version,
                        book: book,
-                       ttl: 1})
+                       ttl: @ttl})
   end
 
   def deleteEntry(isbn)
     @data.delete(isbn)
+  end
+
+
+  def display_cache
+    @data.each { |k, v| puts "#{k} - #{v}" }
   end
 
 end
