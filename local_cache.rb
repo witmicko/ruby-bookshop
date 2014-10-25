@@ -25,6 +25,14 @@ class LocalCache
                        ttl: @ttl})
   end
 
+  def set_complex(key, value)
+    @data.store(key, value)
+  end
+
+  def get_complex(key)
+    @data[key]
+  end
+
   def delete_entry(isbn)
     @data.delete(isbn)
   end

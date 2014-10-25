@@ -57,17 +57,22 @@ class DataAccess
       # if not, build a complex entity
     else
       books = @database.author_search author
-      author_key = author
+      versions = ''
       author_books = []
       books_serialized = []
       books.each do |b|
         isbn = b.isbn.to_sym
         cache_entry = update_caches(isbn)
-
-        books_serialized << cache_entry[:book]
-        author_key  << "_#{isbn}_v#{cache_entry[:version]}"
+        author_books << isbn
+        books_serialized << cache_entry[:book].to_cache
+        versions  << "#{isbn}_v#{cache_entry[:version]},"
       end
-      @remote_cache.set(author_key , books_serialized)
+      @remote_cache.set(author.to_sym, {key: versions , data: books_serialized})
+      @local_cache.set_complex(author.to_sym, {key: versions , data: books})
+      # debug
+      # puts "#{author} #{@remote_cache.get(author.to_sym)}"
+      # puts @remote_cache.get(author.to_sym)[:key]
+      # puts "#{author.to_sym} #{@local_cache.get_complex(author.to_sym)}"
 
 
     end
