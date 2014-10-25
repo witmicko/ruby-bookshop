@@ -69,12 +69,11 @@ class DataAccess
     if inShared
       ver = inShared[:version]+1
       @Remote_cache.set(isbn, {version: ver, book: book.to_cache})
-    end
-    inLoc = @local_cache.get(isbn)
-    if inLoc
-      @local_cache.set(isbn, ver, book)
-    end
 
+      if @local_cache.get(isbn)
+        @local_cache.set(isbn, ver, book)
+      end
+    end
   end
 
   def deleteBook(isbn)
