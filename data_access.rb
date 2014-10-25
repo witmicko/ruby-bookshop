@@ -7,8 +7,8 @@ class DataAccess
 
   def initialize(db_path)
     @database = DataBase.new db_path
-    @Remote_cache = Dalli::Client.new('localhost:11211')
-    @Remote_cache.flush_all
+    @remote_cache = Dalli::Client.new('localhost:11211')
+    @remote_cache.flush_all
     # Relevant data structure(s) for local cache
     @local_cache = LocalCache.new({ttl: 5})
   end
@@ -20,55 +20,67 @@ class DataAccess
   def stop
   end
 
-  def findISBN(isbn)
-    isbn = ISBN_util.to_i(isbn)
-    if (data = updateCaches(isbn))
+  def find_isbn(isbn)
+    isbn_sym = isbn.to_sym
+    data = update_caches(isbn_sym)
+    if data
       data[:book]
     end
   end
 
-  def updateCaches(isbn)
-    inLocal = @local_cache.get(isbn)
-    inShared = @Remote_cache.get(isbn)
-    if inLocal and inShared and inShared[:version]==inLocal[:version]
+  def update_caches(isbn_sym)
+    in_local = @local_cache.get(isbn_sym)
+    in_shared = @remote_cache.get(isbn_sym)
+    if in_local and in_shared and in_shared[:version]==in_local[:version]
       display_cache
-      inLocal
+      in_local
     else
-      if inShared
-        book = inShared[:book]
-        @local_cache.set(isbn, inShared[:version], book)
+      if in_shared
+        book = in_shared[:book]
+        @local_cache.set(isbn_sym, in_shared[:version], book)
       else
-        book = @database.findISBN(ISBN_util.to_s(isbn))
+        isbn_str = isbn_sym.to_s
+        book = @database.find_isbn(isbn_str)
         if book
-          @Remote_cache.set(isbn, {version: 1, book: book.to_cache})
-          @local_cache.set(isbn, 1, book)
+          @remote_cache.set(isbn_sym, {version: 1, book: book.to_cache})
+          @local_cache.set(isbn_sym, 1, book)
         end
       end
     end
   end
 
-  def authorSearch(author)
+  def author_search(author)
+    books = nil
+    # if author already stored in
+    if @remote_cache.get(author)
 
-    books = @database.authorSearch author
-    key = author
-    books.sort! { |a, b| a.isbn <=>b.isbn }
-    books.each do |b|
-      isbn = ISBN_util.to_i(b.isbn)
-      cacheEntry = updateCaches(isbn)
-      key << "_#{isbn}_v#{cacheEntry[:version]}"
+      # if not, build a complex entity
+    else
+      books = @database.author_search author
+      author_key = author
+      author_books = []
+      books_serialized = []
+      books.each do |b|
+        isbn = b.isbn.to_sym
+        cache_entry = update_caches(isbn)
+
+        books_serialized << cache_entry[:book]
+        author_key  << "_#{isbn}_v#{cache_entry[:version]}"
+      end
+      @remote_cache.set(author_key , books_serialized)
+
 
     end
-    puts
     books
   end
 
-  def updateBook(book)
-    @database.updateBook book
-    isbn = ISBN_util.to_i(book.isbn)
-    inShared = @Remote_cache.get(isbn)
-    if inShared
-      ver = inShared[:version]+1
-      @Remote_cache.set(isbn, {version: ver, book: book.to_cache})
+  def update_book(book)
+    @database.update_book book
+    isbn = book.isbn.to_sym
+    in_shared= @remote_cache.get(isbn)
+    if in_shared
+      ver = in_shared[:version]+1
+      @remote_cache.set(isbn, {version: ver, book: book.to_cache})
 
       if @local_cache.get(isbn)
         @local_cache.set(isbn, ver, book)
@@ -76,20 +88,20 @@ class DataAccess
     end
   end
 
-  def deleteBook(isbn)
-    @database.deleteBook ISBN_util.to_s(isbn)
-    isbn = ISBN_util.to_i(isbn)
-    @local_cache.deleteEntry(isbn)
-    @Remote_cache.delete(isbn)
+  def delete_book(isbn)
+    @database.delete_book isbn
+    isbn = isbn.to_sym
+    @local_cache.delete_entry(isbn)
+    @remote_cache.delete(isbn)
 
   end
 
-  def addBook(book)
-    @database.addBook book
+  def add_book(book)
+    @database.add_book book
   end
 
-  def genreSearch(genre)
-    @database.genreSearch genre
+  def genre_search(genre)
+    @database.genre_search genre
   end
 
   def display_cache

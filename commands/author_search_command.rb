@@ -18,7 +18,7 @@ class AuthorSearchCommand < UserCommand
   end
 
   def execute
-    @data_source.authorSearch(@author).each { |b| puts b }
+    @data_source.author_search(@author).each { |b| puts b }
   end
 
 end

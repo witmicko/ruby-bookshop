@@ -18,7 +18,7 @@ class GenreSearchCommand < UserCommand
   end
 
   def execute
-    @data_source.genreSearch(@genre).each {|b| puts b }
+    @data_source.genre_search(@genre).each {|b| puts b }
   end
 
 end

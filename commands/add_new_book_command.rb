@@ -22,29 +22,29 @@ class AddNewBookCommand < UserCommand
     @isbn = STDIN.gets.chomp
     print 'Title: '
     @title = STDIN.gets.chomp
-    @price = getPrice
+    @price = get_price
     print 'Author: '
     @author = STDIN.gets.chomp
-    @genre = getGenre
-    @quantity = getQuantity
+    @genre = get_genre
+    @quantity = get_quantity
   end
 
 
   def execute
-    if @data_source.findISBN(@isbn).nil?
+    if @data_source.find_isbn(@isbn).nil?
       book = BookInStock.new(isbn: @isbn,
                              title: @title,
                              author: @author,
                              genre: $GENRE[@genre],
                              price: @price,
                              quantity: @quantity)
-      @data_source.addBook book
+      @data_source.add_book book
     else
       puts 'isbn already used'
     end
   end
 
-  def getGenre
+  def get_genre
     puts 'Available genres:'
     $GENRE.each_index { |g| puts "\t #{g + 1}. #{$GENRE[g]}" }
     begin
@@ -55,31 +55,31 @@ class AddNewBookCommand < UserCommand
         genre
       else
         puts 'Choice outside of range, try again'
-        getGenre
+        get_genre
       end
     rescue
       puts 'Not a number, try again'
-      getGenre
+      get_genre
     end
   end
 
-  def getPrice
+  def get_price
     begin
       print 'Price: '
       Float(STDIN.gets.chomp)
     rescue
       puts 'Not a number'
-      getPrice
+      get_price
     end
   end
 
-  def getQuantity
+  def get_quantity
     begin
       print 'Quantity: '
       @quantity = STDIN.gets.chomp
     rescue
       puts 'Not a number'
-      getQuantity
+      get_quantity
     end
   end
 

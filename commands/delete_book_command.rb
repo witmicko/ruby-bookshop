@@ -19,14 +19,14 @@ class DeleteBookCommand < UserCommand
 
 
   def execute
-    result = @data_source.findISBN(@isbn)
+    result = @data_source.find_isbn(@isbn)
     if result
       puts "Are you sure you want to delete \n  #{result} ? y/n"
       print 'Response: '
       answer = STDIN.gets.chomp
       if answer.to_s.downcase.include?('y')
         puts "deleting: \n #{result}"
-        @data_source.deleteBook @isbn
+        @data_source.delete_book @isbn
       end
     else
       puts 'Invalid ISBN'

@@ -1,17 +1,17 @@
 require_relative 'book_in_stock'
-require_relative 'utils/isbn_util'
 
 
 class LocalCache
   attr_accessor :locCache
 
   def initialize(args = {})
-    @data = Hash.new()
+    @data = Hash.new
     @ttl = args[:ttl]
   end
 
   def get(isbn)
-    if (entry = @data[isbn])
+    entry = @data[isbn]
+    if entry
       entry[:ttl]-=1
       @data.delete(isbn) if entry[:ttl] == 0
     end
@@ -25,7 +25,7 @@ class LocalCache
                        ttl: @ttl})
   end
 
-  def deleteEntry(isbn)
+  def delete_entry(isbn)
     @data.delete(isbn)
   end
 

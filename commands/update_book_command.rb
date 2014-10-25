@@ -18,7 +18,7 @@ class UpdateBookCommand < UserCommand
   end
 
   def execute
-     book = @data_source.findISBN @isbn
+     book = @data_source.find_isbn @isbn
      if book
         puts '[Hit <return> key to skip to next field]'
         print "Author (#{book.author}) ?"
@@ -32,7 +32,7 @@ class UpdateBookCommand < UserCommand
         print ' ? '
         response = STDIN.gets.chomp.to_i 
         book.genre = $GENRE[response - 1] if (1..$GENRE.length).member? response 
-        @data_source.updateBook book
+        @data_source.update_book book
       else
         puts 'Invalid ISBN'
       end

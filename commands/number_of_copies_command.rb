@@ -18,7 +18,7 @@ class NumberOfCopiesCommand < UserCommand
    end
 
     def execute
-    	result = @data_source.findISBN(@isbn)
+    	result = @data_source.find_isbn(@isbn)
     	if result
     	   puts "No. of copies = #{result.quantity}"
     	else
