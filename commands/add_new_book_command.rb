@@ -31,16 +31,18 @@ class AddNewBookCommand < UserCommand
 
 
   def execute
-    if @data_source.find_isbn(@isbn).nil?
-      book = BookInStock.new(isbn: @isbn,
-                             title: @title,
-                             author: @author,
-                             genre: $GENRE[@genre],
-                             price: @price,
-                             quantity: @quantity)
+    # if @data_source.find_isbn(@isbn).nil?
+    book = BookInStock.new(isbn: @isbn,
+                           title: @title,
+                           author: @author,
+                           genre: $GENRE[@genre],
+                           price: @price,
+                           quantity: @quantity)
+    begin
       @data_source.add_book book
-    else
-      puts 'isbn already used'
+    rescue Exception => e
+      puts e.message
+      puts "oops, isbn: #{book.isbn} already used"
     end
   end
 

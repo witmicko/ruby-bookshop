@@ -19,7 +19,11 @@ class AuthorSearchCommand < UserCommand
 
   def execute
     books = @data_source.author_search(@author)
-    books.each { |b| puts b } unless books.nil?
+    if books.any?
+      books.each { |b| puts b }
+    else
+      puts "no books for author: #{@author}"
+    end
   end
 
 end

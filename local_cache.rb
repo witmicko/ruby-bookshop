@@ -4,9 +4,8 @@ require_relative 'book_in_stock'
 class LocalCache
   attr_accessor :locCache
 
-  def initialize(args = {})
+  def initialize
     @data = Hash.new
-    @ttl = args[:ttl]
   end
 
   def get(isbn)
@@ -19,10 +18,8 @@ class LocalCache
   end
 
 
-  def set(isbn, version, book)
-    @data.store(isbn, {version: version,
-                       book: book,
-                       ttl: @ttl})
+  def set(isbn, key)
+    @data.store(isbn, key)
   end
 
   def set_complex(key, value)
@@ -33,8 +30,8 @@ class LocalCache
     @data[key]
   end
 
-  def delete_entry(isbn)
-    @data.delete(isbn)
+  def delete_entry(key)
+    @data.delete(key)
   end
 
 

@@ -21,7 +21,9 @@ class DataBase
   def find_isbn(isbn)
     dataset = @db_ref[:books].where(:isbn => isbn)
     objects = object_relational_mapper dataset
-    objects[0]
+    if objects
+      objects[0]
+    end
   end
 
   def author_search(author)
