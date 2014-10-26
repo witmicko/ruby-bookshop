@@ -124,7 +124,7 @@ class DataAccess
 
   def add_book(book)
     @database.add_book book
-    
+
     author_key = "bks_#{book.author}".to_sym
     @remote_cache.delete(author_key)
     @local_cache.delete_entry(author_key)
