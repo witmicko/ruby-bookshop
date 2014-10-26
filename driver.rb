@@ -7,8 +7,8 @@ require_relative 'commands/add_new_book_command'
 require_relative 'commands/delete_book_command'
 require_relative 'commands/quit_command'
 
-#data_source = DataAccess.new (ARGV[0])
-data_source = DataAccess.new ('db/bookShop.sqlite')
+data_source = DataAccess.new (ARGV[0])
+# data_source = DataAccess.new ('db/bookShop.sqlite')
 data_source.start
 
 commands = [

@@ -52,7 +52,6 @@ class AddNewBookCommand < UserCommand
     begin
       print 'Genre: '
       genre = Integer(STDIN.gets.chomp) - 1
-      puts genre
       if (0..$GENRE.size) === genre
         genre
       else

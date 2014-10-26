@@ -13,5 +13,6 @@ Outstanding (85-100%) – Completed
 	+ local cache stores Book objects for complex entities.
 	+ Time To Live policy in local cache for basic and complex entities.
 	+ Improved user experience using various callbacks and validations.
+	+ Ruby style compliant in accordance to https://github.com/bbatsov/ruby-style-guide
 
 	

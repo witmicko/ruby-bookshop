@@ -8,27 +8,20 @@ class LocalCache
     @data = Hash.new
   end
 
-  def get(isbn)
-    entry = @data[isbn]
+  def get(key)
+    entry = @data[key]
     if entry
       entry[:ttl]-=1
-      @data.delete(isbn) if entry[:ttl] == 0
+      @data.delete(key) if entry[:ttl] == 0
     end
     entry
   end
 
 
-  def set(isbn, key)
-    @data.store(isbn, key)
-  end
-
-  def set_complex(key, value)
+  def set(key, value)
     @data.store(key, value)
   end
 
-  def get_complex(key)
-    @data[key]
-  end
 
   def delete_entry(key)
     @data.delete(key)

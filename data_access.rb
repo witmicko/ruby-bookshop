@@ -8,7 +8,6 @@ class DataAccess
   def initialize(db_path)
     @database = DataBase.new db_path
     @remote_cache = Dalli::Client.new('localhost:11211')
-    @remote_cache.flush_all
     # Relevant data structure(s) for local cache
     @local_cache = LocalCache.new()
     @loc_cache_ttl = 5
@@ -37,7 +36,7 @@ class DataAccess
       in_local
     else
       if in_shared
-        book = in_shared[:book]
+        book = BookInStock.from_cache(in_shared[:book])
         @local_cache.set(isbn_sym, {version: in_shared[:version], book: book, ttl: @loc_cache_ttl})
       else
         isbn_str = isbn_sym.to_s
@@ -53,9 +52,9 @@ class DataAccess
   def author_search(author)
     author_key = "bks_#{author}".to_sym
     in_shared = @remote_cache.get(author_key)
-    in_local = @local_cache.get_complex(author_key)
+    in_local = @local_cache.get(author_key)
 
-    books = []
+    books = Array.new
     if in_local and in_shared and in_shared[:versions] == in_local[:versions]
       display_cache
       books = in_local[:data]
@@ -68,21 +67,18 @@ class DataAccess
       else
         books = @database.author_search author
         if books.any?
-          versions = ''
-          author_books = []
+          versions = String.new
           books_serialized = String.new
           books.each do |b|
             isbn = b.isbn
             cache_entry = update_caches(isbn.to_sym)
-            author_books << isbn
             books_serialized << "#{cache_entry[:book].to_cache};"
             versions << "#{isbn}_v#{cache_entry[:version]},"
 
             @remote_cache.set(author_key,
-                              {books: author_books, versions: versions, data: books_serialized})
+                              {versions: versions, data: books_serialized})
             @local_cache.set(author_key,
-                             {books: author_books, versions: versions, data: books,
-                              ttl: @loc_cache_ttl})
+                             {versions: versions, data: books, ttl: @loc_cache_ttl})
           end
         end
       end
@@ -137,6 +133,7 @@ class DataAccess
   def display_cache
     puts 'Local cache:'
     @local_cache.display_cache
+    puts
   end
 
 

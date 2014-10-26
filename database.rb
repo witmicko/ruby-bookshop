@@ -12,7 +12,7 @@ class DataBase
 
   def start
     @db_ref = Sequel.sqlite(@db_path)
-    # @db_ref.loggers << Logger.new($stdout)
+    @db_ref.loggers << Logger.new($stdout)
   end
 
   def stop
